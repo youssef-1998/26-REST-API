@@ -1,0 +1,109 @@
+const express = require('express');
+const {MongoClient, ObjectID} = require('mongodb');
+const bodyParser =require('body-parser');
+const assert = require('assert');
+
+const app = express()
+
+app.use(bodyParser.json())
+
+const mongo_url = 'mongodb://localhost:27017'
+const dataBase = 'first-api'
+
+MongoClient.connect(mongo_url, (err, client) => {
+    assert.equal(err, null, 'data base connexion failed')
+
+    const db = client.db(dataBase)
+
+    // app.post('/new_product', (req, res) => {
+    //     let newProduct = req.bodydb.collection('prodoct').insertOne(newProduct, (err, data) => {
+    //         if (err) res.send('cant add product')
+    //         else res.send('product aded')
+    //     })
+    // })
+
+    // app.get('/products', (req, res) => {
+    //     db.collection('products').find.toArray((err, data) => {
+    //         if (err) res.send('cant fecth products')
+    //         else res.send(data)
+    //     })
+    // })
+
+    // app.get('/product/:id', (req, res) => {
+    //     let searchProductId = ObjectID(req.params.id)
+    //     db.collection('products').findOne({_id : searchProductId}, (err, data) => {
+    //         if (err) res.send('cant fecth products')
+    //         else res.send(data)
+    //     })
+
+    // })
+
+    // app.put('/modify_product/:id',(req, res) => {
+    //     let id = ObjectID(req.params.id)
+    //     let modifiedProduct = req.body
+    //     db.collection('products').findOneAndUpdate({_id : id}, {...modifiedProduct}, (err, data) => {
+    //         if(err) res.send('cont modify product')
+    //         else res.send('product was modife')
+    //     })
+    // })
+
+    app.delete('delet_product/:id', (req, res) => {
+        let pProductToRemoveId = ObjectID(req.params.id)
+        db.collection('products').findOneAndDelete({_id : pProductToRemoveId}, (err, data) => {
+            if (err) res.send('cant delet product')
+            else res.send('product was deleted')
+        })
+    })
+})
+
+app.listen(3000, (err) => {
+    if (err) console.log("server err")
+    else console.log('server is running on port 3000')
+})
+
+// var tab =[
+//     {name : "product1",
+//     price : 20,
+//     availableQty :10
+//     },
+//     {name : "product2",
+//     price : 20,
+//     availableQty :5
+//     },
+//     {name : "product3",
+//     price : 10,
+//     availableQty :0
+//     },
+// ]
+
+// app.get('/products', (req, res) => {
+//     res.send(tab)
+// })
+
+// app.get('/products/:name', (req, res) => {
+//     let productName = req.params.name
+//     let productToFetech = tab.filter(e => e.name === productName)
+//     res.send(productToFetech)
+// })
+
+// console.log('initiale tab value', tab)
+
+// app.post('/add_product', (req, res) => {
+//     let newProduct = req.body
+//     tab.push(newProduct)
+//     res.send(tab)
+//     console.log("new tab value" , tab)
+// })
+
+// app.put('modify_product', (req, res) => {
+//     let modifiedProduct = req.body
+//     tab = tab.map(e => e.name === modifiedProduct.name ? e = modifiedProduct : e)
+//     res.send(tab)
+// })
+
+// app.delete('/delete_product/:name', (req, res) => {
+//     let productToRemmove = req.params.name
+//     tab = tab.filter(e => e.name !== productToRemmove)
+//     res.send(tab)
+// })
+
